@@ -37,9 +37,9 @@
     $directory = __DIR__;
     $scannedItems = scanFolder($directory);
 
-    // Display the result
-    foreach ($scannedItems as $item) {
-        echo "Path: " . $item['path'] . "<br>";
-        echo "Current Path: " . $item['current_path'] . "<br><br>";
-    }
+    // Set the header to return JSON content
+    header('Content-Type: application/json');
+
+    // Output the result as JSON
+    echo json_encode($scannedItems, JSON_PRETTY_PRINT);
 ?>
