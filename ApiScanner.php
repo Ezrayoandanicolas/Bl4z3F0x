@@ -31,7 +31,8 @@
             }
         }
         
-        return $result;
+        // return $result;
+        echo $result;
     }
 
     $directory = __DIR__;
