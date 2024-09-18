@@ -31,10 +31,15 @@
             }
         }
         
-        // return $result;
-        echo $result;
+        return $result;
     }
 
     $directory = __DIR__;
-    scanFolder($directory);
+    $scannedItems = scanFolder($directory);
+
+    // Display the result
+    foreach ($scannedItems as $item) {
+        echo "Path: " . $item['path'] . "<br>";
+        echo "Current Path: " . $item['current_path'] . "<br><br>";
+    }
 ?>
