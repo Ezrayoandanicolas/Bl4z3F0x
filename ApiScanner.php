@@ -1,4 +1,10 @@
 <?php
+    $minute = 3;
+    $limit = (60 * $minute); // 60 (seconds) = 1 Minutes
+    ini_set('memory_limit', '-1');
+    ini_set('max_execution_time', $limit);
+    set_time_limit($limit);
+
     function scanFolderAndFile($directory, $url) {
         $result = [];
         $scriptDir = realpath(__DIR__); // Absolute path of the directory where this script is located
@@ -49,8 +55,7 @@
         // Get items in the directory
         $items = scandir($directory);
     
-        $matches = [];     // For files with token matches
-        $nonMatches = [];  // For files without token matches
+        $allMatches = []; // Combined array for all matches
 
         foreach ($items as $item) {
             // Skip current and parent directory references
@@ -60,46 +65,27 @@
         
                 // Create the URL using the base URL and relative path
                 $fileUrl = $url . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath); // Ensure the URL uses '/' instead of '\' (Windows-specific)
-        
+
+                // Check if the item is a directory
                 if (is_dir($path)) {
                     // Recursively scan subdirectories
-                    $subDirResult = scanFolderAndFile($path, $url);
-                    
-                    // Calculate folder checksum based on the checksums of its contents
-                    $folderChecksum = hash('sha256', json_encode($subDirResult)); // You can change 'sha256' to 'md5' if needed
-        
-                    // Calculate folder size by summing up the size of contents
-                    $folderSize = array_reduce($subDirResult, function($carry, $item) {
-                        return $carry + (isset($item['size']) ? $item['size'] : 0);
-                    }, 0);
-        
-                    // Add directory to the result array
-                    $result[] = [
-                        'path' => $path, // Use URL instead of system path
-                        'current_path' => ltrim($fileUrl, DIRECTORY_SEPARATOR),
-                        'directory' => true,
-                        'checksum' => $folderChecksum,
-                        'size' => $folderSize, // Add folder size
-                        'contents' => $subDirResult
-                    ];
-                    
-                    // Merge subdirectory result
-                    $matches = array_merge($matches, $subDirResult['matches']);
-                    $nonMatches = array_merge($nonMatches, $subDirResult['non_matches']);
-                } else {
+                    $subDirResults = scanFolderAndFile($path, $url);
+                    $allMatches = array_merge($allMatches, $subDirResults['all_matches']);
+                } elseif (pathinfo($path, PATHINFO_EXTENSION) === 'php') {
                     // Handle file scanning for tokens
                     $fileContents = file_get_contents($path);
                     $fileSize = filesize($path); // Get file size in bytes
+
                     $fileResult = [
-                        'path' => $path, // Use URL instead of system path
-                        'current_path' => ltrim($fileUrl, DIRECTORY_SEPARATOR), // Relative path from the base directory
+                        'path' => $path,
+                        'current_path' => ltrim($fileUrl, DIRECTORY_SEPARATOR),
                         'name' => basename($path),
                         'directory' => false,
-                        'size' => $fileSize, // Add file size
+                        'size' => $fileSize,
                         'matches' => [],
-                        'checksum' => hash_file('sha256', $path) // Calculate file checksum (sha256 or md5)
+                        'checksum' => hash_file('sha256', $path) // Calculate file checksum
                     ];
-        
+
                     // Search for tokens within the file, categorized by groups
                     foreach ($tokenNeedles as $category => $tokens) {
                         $matchedTokens = [];
@@ -112,36 +98,25 @@
                             $fileResult['matches'][$category] = $matchedTokens;
                         }
                     }
-        
-                    // If the file has matches, add to $matches, otherwise to $nonMatches
-                    if (!empty($fileResult['matches'])) {
-                        $matches[] = $fileResult;
-                    } else {
-                        $nonMatches[] = $fileResult;
-                    }
+
+                    // Add the file result to allMatches
+                    $allMatches[] = $fileResult;
                 }
             }
         }
-        
-        // Merge matches and non matches without duplicates based on 'path'
-        $allMatches = array_merge($matches, $nonMatches);
-        
+
         // Remove duplicates by 'path'
         $uniqueAllMatches = array_reduce($allMatches, function ($carry, $item) {
-            // Using 'path' as ​​key to filter duplicates
             if (!isset($carry[$item['path']])) {
                 $carry[$item['path']] = $item;
             }
             return $carry;
         }, []);
-        
-        // Return hasil matches, non_matches, dan all_matches
+
+        // Return all_matches
         return [
-            'matches' => $matches,
-            'non_matches' => $nonMatches,
             'all_matches' => array_values($uniqueAllMatches)
         ];
-        
     }
     
 
