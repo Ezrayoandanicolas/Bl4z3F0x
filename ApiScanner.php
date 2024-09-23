@@ -135,7 +135,7 @@
         $rawFile = $_GET['RawFile'];
 
         // Cek apakah file ada dan bisa dibaca
-        if (file_exists($filePath)) {
+        if (file_exists($rawFile) && is_readable($rawFile)) {
             // Set response header untuk file mentah
             header("Content-Type: text/plain");
 
