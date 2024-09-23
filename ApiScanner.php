@@ -29,7 +29,13 @@
             'ShellProcess' => [
                 'eval', 'exec', 'shell_exec', 'system', 'passthru', 'pcntl_fork', 'fsockopen', 'proc_open',
                 'popen', 'assert', 'posix_kill', 'posix_setpgid', 'posix_setsid', 'posix_setuid', 'proc_nice',
-                'proc_close', 'proc_terminate', 'apache_child_terminate', 'curl_exec', 'curl_multi_exec', 'base64_decode', 'include', 'require', 'file_get_contents', 'fopen', 'fwrite', 'fclose', 'move_uploaded_file', 'preg_replace', 'unserialize'
+                'proc_close', 'proc_terminate', 'apache_child_terminate', 'curl_exec', 'curl_multi_exec', 
+                'base64_decode', 'include', 'require', 'file_get_contents', 'fopen', 'fwrite', 'fclose', 
+                'move_uploaded_file', 'preg_replace', 'unserialize', 'file_put_contents', 'unlink', 'rename',
+                'chmod', 'chown', 'symlink', 'copy', 'include_once', 'require_once', 'getimagesize', 'readfile',
+                'stream_socket_client', 'stream_socket_server', 'stream_socket_accept', 'mail', 'pcntl_exec',
+                'call_user_func', 'call_user_func_array', 'create_function', 'gzuncompress', 'gzdecode', 
+                'mb_ereg_replace', 'phpinfo', 'getenv', 'putenv', 'get_current_user'
             ],
             'Server Information' => [
                 'posix_getuid', 'posix_geteuid', 'posix_getegid', 'posix_getpwuid', 'posix_getgrgid', 'posix_mkfifo',
