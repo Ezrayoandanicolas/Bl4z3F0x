@@ -33,7 +33,7 @@
                 'base64_decode', 'include', 'require', 'file_get_contents', 'fopen', 'fwrite', 'fclose', 
                 'move_uploaded_file', 'preg_replace', 'unserialize', 'file_put_contents', 'unlink', 'rename',
                 'chmod', 'chown', 'symlink', 'copy', 'include_once', 'require_once', 'getimagesize', 'readfile',
-                'stream_socket_client', 'stream_socket_server', 'stream_socket_accept', 'mail', 'pcntl_exec',
+                'stream_socket_client', 'stream_socket_server', 'stream_socket_accept', 'pcntl_exec',
                 'call_user_func', 'call_user_func_array', 'create_function', 'gzuncompress', 'gzdecode', 
                 'mb_ereg_replace', 'phpinfo', 'getenv', 'putenv', 'get_current_user'
             ],
