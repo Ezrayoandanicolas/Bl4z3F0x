@@ -6,7 +6,7 @@
     set_time_limit($limit);
 
     function scanFolderAndFile($directory, $url) {
-        $result = [];
+        // $result = [];
         $scriptDir = realpath(__DIR__); // Absolute path of the directory where this script is located
         
         // Ensure the directory path ends with a DIRECTORY_SEPARATOR
@@ -127,7 +127,30 @@
 
     try {
         // Set directory to scan
-        $directory = isset($_GET['directory']) ? $_GET['directory'] : __DIR__;
+    $directory = isset($_GET['directory']) ? $_GET['directory'] : __DIR__;
+
+    // Cek apakah parameter 'RawFile' ada di URL
+    if (isset($_GET['RawFile'])) {
+        // Dapatkan path file dari parameter RawFile
+        $rawFile = $_GET['RawFile'];
+
+        // Cek apakah file ada dan bisa dibaca
+        if (file_exists($filePath) && is_readable($filePath)) {
+            // Set response header untuk file mentah
+            header("Content-Type: text/plain");
+
+            // Baca dan tampilkan isi file mentah
+            echo file_get_contents($rawFile);
+        } else {
+            // Jika file tidak ditemukan atau tidak bisa dibaca
+            http_response_code(404);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'File not found or not readable'
+            ]);
+        }
+    } else {
+        // Jika 'RawFile' tidak ada, scan folder dan file seperti biasa
 
         // Scan the folder
         // $scannedItems = scanFolder($directory, $url);
@@ -141,6 +164,7 @@
             'status' => 'success',
             'data' => $scannedItems
         ]);
+    }
     } catch (Exception $e) {
         // Set response code 500 Internal Server Error
         http_response_code(500);
